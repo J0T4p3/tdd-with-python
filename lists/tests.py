@@ -2,8 +2,11 @@ from django.test import TestCase
 
 
 class HomePageTest(TestCase):
-    def test_home_page_that_returns_correct_html(self):
-        # By the context, get the view associated with the url
+    def test_correct_template_rendering(self):
         response = self.client.get("/")
         self.assertTemplateUsed(response, "lists/home_page.html")
 
+    # A little smoke test in the unittest
+    def test_correct_content_displayed(self):
+        response = self.client.get("/")
+        self.assertContains(response, "To-do")
