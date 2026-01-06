@@ -9,4 +9,5 @@ class HomePageTest(TestCase):
         self.assertIn("<title>To-do lists</title>", html)
         self.assertTrue(html.startswith("<html>"))
         self.assertTrue(html.endswith("</html>"))
+        self.assertTemplateUsed("lists/home_page.html")
 
