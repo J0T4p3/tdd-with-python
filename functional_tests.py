@@ -34,7 +34,11 @@ class NewVisitorsTest(unittest.TestCase):
         time.sleep(1)
         table = self.browser.find_element(By.ID, "id_todo_table")
         rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertTrue(any(row.text == "1: make a pasta" for row in rows))
+
+        self.assertTrue(
+            any(row.text == "1: make a pasta" for row in rows),
+            "New todo item not found at the table"
+        )
 
         # The box is now empty again, ready to receive new inputs
         self.fail('Finish the test')
