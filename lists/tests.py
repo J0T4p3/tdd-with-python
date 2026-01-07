@@ -10,4 +10,8 @@ class HomePageTest(TestCase):
     def test_exists_todo_form(self):
         response = self.client.get("/")
         self.assertContains(response, '<form method="POST">')
-        self.assertContains(response, '<input id="id_input_todo" name="todo-item" placeholder="Enter a to-do item" />')
+        self.assertContains(response, '<input name="todo_item"')
+
+    def test_post_todo_addition_request(self):
+        response = self.client.post("/", data={"todo_item": "a new todo"})
+        self.assertContains(response, "a new todo")
