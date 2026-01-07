@@ -8,6 +8,10 @@
       <input name="todo_item" id="id_input_todo" placeholder="Enter a to-do item" />
       {% csrf_token %}
     </form>
-    <table id="id_todo_table"></table>
+    <table id="id_todo_table">
+      <tr>
+        <td>{{ todo_item }}</td>
+      </tr>
+    </table>
   </body>
 </html>
