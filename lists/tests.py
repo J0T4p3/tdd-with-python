@@ -7,6 +7,7 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, "lists/home_page.html")
 
     # A little smoke test in the unittest
-    def test_correct_content_displayed(self):
+    def test_exists_todo_form(self):
         response = self.client.get("/")
-        self.assertContains(response, "To-do")
+        self.assertContains(response, '<form method="POST">')
+        self.assertContains(response, '<input id="id_input_todo" name="todo-item" placeholder="Enter a to-do item" />')
