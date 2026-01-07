@@ -37,7 +37,7 @@ class NewVisitorsTest(unittest.TestCase):
 
         self.assertTrue(
             any(row.text == "1: make a pasta" for row in rows),
-            "New todo item not found at the table"
+            f"New todo item not found at the table. Actual contents are: {table.text}"
         )
 
         # The box is now empty again, ready to receive new inputs

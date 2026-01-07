@@ -16,3 +16,10 @@ class HomePageTest(TestCase):
         response = self.client.post("/", data={"todo_item": "a new todo"})
         self.assertContains(response, "a new todo")
         self.assertTemplateUsed(response, "lists/home_page.html")
+
+    def test_post_multiple_todo_addition_request(self):
+        response = self.client.post("/", data={"todo_item": "a new todo"})
+        response = self.client.post("/", data={"todo_item": "other todo"})
+        self.assertContains(response, "a new todo")
+        self.assertContains(response, "other todo")
+        self.assertTemplateUsed(response, "lists/home_page.html")
