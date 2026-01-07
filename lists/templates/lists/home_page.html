@@ -1,11 +1,13 @@
 <html>
-    <head>
-        <title>To-do lists</title>
-    </head>
-    <body>
-        <h1>To-do</h1>
-        <input id="id_input_todo" placeholder="Enter a to-do item"/>
-        <table id="id_todo_table">
-        </table>
-    </body>
+  <head>
+    <title>To-do lists</title>
+  </head>
+  <body>
+    <h1>To-do</h1>
+    <form method="POST">
+      <input id="id_input_todo" name="todo-item" placeholder="Enter a to-do item" />
+      {% csrf_token %}
+    </form>
+    <table id="id_todo_table"></table>
+  </body>
 </html>
