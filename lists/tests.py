@@ -1,3 +1,5 @@
+from xmlrpc.client import ResponseError
+
 from django.test import TestCase
 
 from .models import Item
@@ -7,6 +9,16 @@ class HomePageTest(TestCase):
     def test_correct_template_rendering(self):
         response = self.client.get("/")
         self.assertTemplateUsed(response, "lists/home_page.html")
+
+    def test_home_page_displays_all_todos(self):
+        todo_1 = 'activitie 1'
+        todo_2 = 'activitie 2'
+        Item.objects.create(text=todo_1)
+        Item.objects.create(text=todo_2)
+
+        response = self.client.get('/')
+        self.assertContains(response, todo_1)
+        self.assertContains(response, todo_2)
 
     # A little smoke test in the unittest
     def test_exists_todo_form(self):
