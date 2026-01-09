@@ -29,21 +29,21 @@ class HomePageTest(TestCase):
         self.assertEqual(todos[1].text, "other todo")
 
 class ItemModelTest(TestCase):
+    def test_user_are_redirected_after_POST_request(self):
+        response = self.client.post('/', {'todo_item': 'test redirect'})
+        self.assertRedirects(response, '/')
+
     def test_can_save_POST_request(self):
         todo_text = 'a new todo item'
-        response = self.client.post('/', {'todo_item': todo_text})
-
+        self.client.post('/', {'todo_item': todo_text})
         new_item=Item.objects.last()
         self.assertEqual(new_item.text, todo_text)
-        self.assertRedirects(response, '/')
 
     def test_can_save_multiple_POST_items(self):
         todo_text = 'a new todo item'
         todo_other_text = 'a newer todo item!'
         self.client.post('/', {'todo_item': todo_text})
-        response = self.client.post('/', {'todo_item': todo_other_text})
-
-        self.assertRedirects(response, '/')
+        self.client.post('/', {'todo_item': todo_other_text})
 
     def test_do_not_save_empty_items(self):
         self.client.get('/')
