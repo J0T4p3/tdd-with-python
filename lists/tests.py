@@ -1,5 +1,7 @@
 from django.test import TestCase
 
+from .models import Item
+
 
 class HomePageTest(TestCase):
     def test_correct_template_rendering(self):
@@ -23,3 +25,19 @@ class HomePageTest(TestCase):
         self.assertContains(response, "a new todo")
         self.assertContains(response, "other todo")
         self.assertTemplateUsed(response, "lists/home_page.html")
+
+class ItemModelTest(TestCase):
+    def test_saved_item(self):
+        item = Item()
+        item.text = "The first Item"
+        item.save()
+
+        item = Item()
+        item.text = "The second Item"
+        item.save()
+
+        saved_items = Item.objects.all()
+        self.assertEqual(saved_items.count(), 2)
+        self.assertEqual(saved_items[0].text, "The first Item")
+        self.assertEqual(saved_items[1].text, "The second Item")
+
