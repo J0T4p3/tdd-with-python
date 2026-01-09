@@ -12,6 +12,12 @@ class NewVisitorsTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def assert_row_in_table(self, row_text):
+        table = self.browser.find_element(By.ID, "id_todo_table")
+        rows = table.find_elements(By.TAG_NAME, "tr")
+        self.assertIn(row_text, [row.text for row in rows])
+
+
     def test_can_start_a_todo_list(self):
         # Edith get to know a new website for writing todo lists
         # She goes to its homepage
@@ -25,8 +31,6 @@ class NewVisitorsTest(unittest.TestCase):
         # She are prompted to write a todo right away
         input_box = self.browser.find_element(By.ID, "id_input_todo")
         self.assertEqual(input_box.get_attribute("placeholder"), "Enter a to-do item")
-
-        # She types "make a pasta" on the box and press 'enter'
         input_box.send_keys("make a pasta")
         input_box.send_keys(webdriver.Keys.ENTER)
 
@@ -39,17 +43,9 @@ class NewVisitorsTest(unittest.TestCase):
 
         # After she presses the button, a list appear bellow the input box with 1 - make a pasta as it's title
         time.sleep(1)
-        table = self.browser.find_element(By.ID, "id_todo_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
 
-        self.assertTrue(
-            any(row.text == "1: make a pasta" for row in rows),
-            f"New todo item not found in {[todo.text for todo in rows]}"
-        )
-        self.assertTrue(
-            any(row.text == "2: serve it to friends" for row in rows),
-            f"New todo item not found in {[todo.text for todo in rows]}"
-        )
+        self.assert_row_in_table("1: make a pasta" )
+        self.assert_row_in_table("2: serve it to friends" )
 
         # The box is now empty again, ready to receive new inputs
         self.fail('Finish the test')
