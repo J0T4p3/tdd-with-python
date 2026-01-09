@@ -30,6 +30,13 @@ class NewVisitorsTest(unittest.TestCase):
         input_box.send_keys("make a pasta")
         input_box.send_keys(webdriver.Keys.ENTER)
 
+        time.sleep(1)
+
+        input_box = self.browser.find_element(By.ID, "id_input_todo")
+        self.assertEqual(input_box.get_attribute("placeholder"), "Enter a to-do item")
+        input_box.send_keys("serve it to friends")
+        input_box.send_keys(webdriver.Keys.ENTER)
+
         # After she presses the button, a list appear bellow the input box with 1 - make a pasta as it's title
         time.sleep(1)
         table = self.browser.find_element(By.ID, "id_todo_table")
@@ -37,7 +44,11 @@ class NewVisitorsTest(unittest.TestCase):
 
         self.assertTrue(
             any(row.text == "1: make a pasta" for row in rows),
-            f"New todo item not found at the table. Actual contents are: {table.text}"
+            f"New todo item not found in {[todo.text for todo in rows]}"
+        )
+        self.assertTrue(
+            any(row.text == "2: serve it to friends" for row in rows),
+            f"New todo item not found in {[todo.text for todo in rows]}"
         )
 
         # The box is now empty again, ready to receive new inputs
