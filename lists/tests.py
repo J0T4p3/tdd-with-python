@@ -27,25 +27,26 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, "lists/home_page.html")
 
 class ItemModelTest(TestCase):
-    def test_saved_item(self):
-        item = Item()
-        item.text = "The first Item"
-        item.save()
-
-        item = Item()
-        item.text = "The second Item"
-        item.save()
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-        self.assertEqual(saved_items[0].text, "The first Item")
-        self.assertEqual(saved_items[1].text, "The second Item")
-
     def test_can_save_POST_request(self):
         todo_text = 'a new todo item'
         response = self.client.post('/', {'todo_item': todo_text})
+
         new_item=Item.objects.last()
         self.assertEqual(new_item.text, todo_text)
         self.assertContains(response, todo_text)
         self.assertTemplateUsed('lists/home_page.html')
 
+    def test_can_save_multiple_POST_items(self):
+        todo_text = 'a new todo item'
+        todo_other_text = 'a newer todo item!'
+        self.client.post('/', {'todo_item': todo_text})
+        response = self.client.post('/', {'todo_item': todo_other_text})
+
+        self.assertContains(response, todo_text)
+        self.assertContains(response, todo_other_text)
+        self.assertTemplateUsed('lists/home_page.html')
+
+    def test_do_not_save_empty_items(self):
+        self.client.get('/')
+        self.assertEqual(Item.objects.count(), 0)
+        self.assertTemplateUsed('lists/home_page.html')
