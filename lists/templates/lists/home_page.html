@@ -10,7 +10,9 @@
     </form>
     <table id="id_todo_table">
       <tr>
-        <td>1: {{ todo_item }}</td>
+        {% for todo in todo_items %}
+          <td>{{ forloop.counter }}: {{ todo.text }}</td>
+        {% endfor %}
       </tr>
     </table>
   </body>
