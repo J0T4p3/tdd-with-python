@@ -41,3 +41,11 @@ class ItemModelTest(TestCase):
         self.assertEqual(saved_items[0].text, "The first Item")
         self.assertEqual(saved_items[1].text, "The second Item")
 
+    def test_can_save_POST_request(self):
+        todo_text = 'a new todo item'
+        response = self.client.post('/', {'todo_item': todo_text})
+        new_item=Item.objects.last()
+        self.assertEqual(new_item.text, todo_text)
+        self.assertContains(response, todo_text)
+        self.assertTemplateUsed('lists/home_page.html')
+
