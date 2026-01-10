@@ -2,8 +2,10 @@ import time
 
 from django.test import LiveServerTestCase
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 
+MAX_WAIT = 5
 
 class NewVisitorsTest(LiveServerTestCase):
     def setUp(self):
@@ -13,9 +15,18 @@ class NewVisitorsTest(LiveServerTestCase):
         self.browser.quit()
 
     def assert_row_in_table(self, row_text):
-        table = self.browser.find_element(By.ID, "id_todo_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertIn(row_text, [row.text for row in rows])
+        start_time = time.time()
+        while True:
+            try:
+                table = self.browser.find_element(By.ID, "id_todo_table")
+                rows = table.find_elements(By.TAG_NAME, "tr")
+                self.assertIn(row_text, [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException):
+                if time.time() - start_time > MAX_WAIT:
+                    raise
+                time.sleep(0.1)
+
 
 
     def test_can_start_a_todo_list(self):
@@ -36,8 +47,6 @@ class NewVisitorsTest(LiveServerTestCase):
         input_box.send_keys("make a pasta")
         input_box.send_keys(webdriver.Keys.ENTER)
 
-        time.sleep(1)
-
         self.assert_row_in_table("1: make a pasta" )
 
         # She writes again, now with the words "Serve the pasta to friends".
@@ -49,8 +58,6 @@ class NewVisitorsTest(LiveServerTestCase):
         input_box.send_keys(webdriver.Keys.ENTER)
 
         # After she presses the button, a list appear bellow the input box with 2 - serve it to friends as it's title
-        time.sleep(1)
-
         self.assert_row_in_table("2: serve it to friends" )
 
         # The box is now empty again, ready to receive new inputs
