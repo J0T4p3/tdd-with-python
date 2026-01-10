@@ -1,5 +1,3 @@
-from xmlrpc.client import ResponseError
-
 from django.test import TestCase
 
 from .models import Item
@@ -20,7 +18,6 @@ class HomePageTest(TestCase):
         self.assertContains(response, todo_1)
         self.assertContains(response, todo_2)
 
-    # A little smoke test in the unittest
     def test_exists_todo_form(self):
         response = self.client.get("/")
         self.assertContains(response, '<form method="POST">')

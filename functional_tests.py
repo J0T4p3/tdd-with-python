@@ -31,28 +31,31 @@ class NewVisitorsTest(unittest.TestCase):
         # She are prompted to write a todo right away
         input_box = self.browser.find_element(By.ID, "id_input_todo")
         self.assertEqual(input_box.get_attribute("placeholder"), "Enter a to-do item")
+
+        # After she presses the button, a list appear bellow the input box with 1 - make a pasta as it's title
         input_box.send_keys("make a pasta")
         input_box.send_keys(webdriver.Keys.ENTER)
 
         time.sleep(1)
 
+        self.assert_row_in_table("1: make a pasta" )
+
+        # She writes again, now with the words "Serve the pasta to friends".
+        # Again, after pressing 'enter', the words written are now in the second list item,
+        # 2 - Serve the pasta to friends, with the first step appearing before the second.
         input_box = self.browser.find_element(By.ID, "id_input_todo")
         self.assertEqual(input_box.get_attribute("placeholder"), "Enter a to-do item")
         input_box.send_keys("serve it to friends")
         input_box.send_keys(webdriver.Keys.ENTER)
 
-        # After she presses the button, a list appear bellow the input box with 1 - make a pasta as it's title
+        # After she presses the button, a list appear bellow the input box with 2 - serve it to friends as it's title
         time.sleep(1)
 
-        self.assert_row_in_table("1: make a pasta" )
         self.assert_row_in_table("2: serve it to friends" )
 
         # The box is now empty again, ready to receive new inputs
         self.fail('Finish the test')
 
-        # She writes again, now with the words "Serve the pasta to friends".
-        # Again, after pressing 'enter', the words written are now in the second list item,
-        # 2 - Serve the pasta to friends, with the first step appearing before the second.
 
 if __name__ == "__main__":
     unittest.main()
