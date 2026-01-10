@@ -1,11 +1,11 @@
 import time
-import unittest
 
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 
-class NewVisitorsTest(unittest.TestCase):
+class NewVisitorsTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
 
@@ -21,7 +21,7 @@ class NewVisitorsTest(unittest.TestCase):
     def test_can_start_a_todo_list(self):
         # Edith get to know a new website for writing todo lists
         # She goes to its homepage
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # She notices something related with To-do on the title
         self.assertIn("To-do", self.browser.title)
@@ -55,7 +55,3 @@ class NewVisitorsTest(unittest.TestCase):
 
         # The box is now empty again, ready to receive new inputs
         self.fail('Finish the test')
-
-
-if __name__ == "__main__":
-    unittest.main()
