@@ -14,7 +14,7 @@ class NewVisitorsTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def assert_row_in_table(self, row_text):
+    def wait_for_row_in_table(self, row_text):
         start_time = time.time()
         while True:
             try:
@@ -47,7 +47,7 @@ class NewVisitorsTest(LiveServerTestCase):
         input_box.send_keys("make a pasta")
         input_box.send_keys(webdriver.Keys.ENTER)
 
-        self.assert_row_in_table("1: make a pasta" )
+        self.wait_for_row_in_table("1: make a pasta" )
 
         # She writes again, now with the words "Serve the pasta to friends".
         # Again, after pressing 'enter', the words written are now in the second list item,
@@ -58,7 +58,4 @@ class NewVisitorsTest(LiveServerTestCase):
         input_box.send_keys(webdriver.Keys.ENTER)
 
         # After she presses the button, a list appear bellow the input box with 2 - serve it to friends as it's title
-        self.assert_row_in_table("2: serve it to friends" )
-
-        # The box is now empty again, ready to receive new inputs
-        self.fail('Finish the test')
+        self.wait_for_row_in_table("2: serve it to friends" )
