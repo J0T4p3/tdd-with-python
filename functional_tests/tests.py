@@ -1,61 +1,30 @@
-import time
+import os
+import re
 
-from django.test import LiveServerTestCase
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.by import By
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
-MAX_WAIT = 5
-
-class NewVisitorsTest(LiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def wait_for_row_in_table(self, row_text):
-        start_time = time.time()
-        while True:
-            try:
-                table = self.browser.find_element(By.ID, "id_todo_table")
-                rows = table.find_elements(By.TAG_NAME, "tr")
-                self.assertIn(row_text, [row.text for row in rows])
-                return
-            except (AssertionError, WebDriverException):
-                if time.time() - start_time > MAX_WAIT:
-                    raise
-                time.sleep(0.1)
+import pytest
+from playwright.sync_api import Page, expect, sync_playwright
 
 
+@pytest.mark.django_db
+def test_can_start_a_todo_list(live_server, page:Page):
+    page.goto(live_server.url)
+    expect(page).to_have_title(re.compile("To-do"))
+    expect(page.get_by_role('h1', name="To-do"))
 
-    def test_can_start_a_todo_list(self):
-        # Edith get to know a new website for writing todo lists
-        # She goes to its homepage
-        self.browser.get(self.live_server_url)
+    # She are prompted to write a todo right away
+    input_box = page.get_by_placeholder("Enter a to-do item")
 
-        # She notices something related with To-do on the title
-        self.assertIn("To-do", self.browser.title)
-        header_text = self.browser.find_element(By.TAG_NAME, "h1").text
-        self.assertIn("To-do", header_text)
+    # After she presses the button, a list appear bellow the input box with 1 - make a pasta as it's title
+    input_box.fill("make a pasta")
+    page.get_by_placeholder("Enter a to-do item").press('Enter')
+    expect(page.get_by_text("1: make a pasta", exact=True)).to_be_visible()
 
-        # She are prompted to write a todo right away
-        input_box = self.browser.find_element(By.ID, "id_input_todo")
-        self.assertEqual(input_box.get_attribute("placeholder"), "Enter a to-do item")
-
-        # After she presses the button, a list appear bellow the input box with 1 - make a pasta as it's title
-        input_box.send_keys("make a pasta")
-        input_box.send_keys(webdriver.Keys.ENTER)
-
-        self.wait_for_row_in_table("1: make a pasta" )
-
-        # She writes again, now with the words "Serve the pasta to friends".
-        # Again, after pressing 'enter', the words written are now in the second list item,
-        # 2 - Serve the pasta to friends, with the first step appearing before the second.
-        input_box = self.browser.find_element(By.ID, "id_input_todo")
-        self.assertEqual(input_box.get_attribute("placeholder"), "Enter a to-do item")
-        input_box.send_keys("serve it to friends")
-        input_box.send_keys(webdriver.Keys.ENTER)
-
-        # After she presses the button, a list appear bellow the input box with 2 - serve it to friends as it's title
-        self.wait_for_row_in_table("2: serve it to friends" )
+    # She writes again, now with the words "Serve the pasta to friends".
+    # Again, after pressing 'enter', the words written are now in the second list item,
+    # 2 - Serve the pasta to friends, with the first step appearing before the second.
+    input_box.fill("serve it to friends")
+    page.get_by_placeholder("Enter a to-do item").press('Enter')
+    expect(page.get_by_text("1: make a pasta", exact=True)).to_be_visible()
+    expect(page.get_by_text("2: serve it to friends", exact=True)).to_be_visible()
