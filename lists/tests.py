@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .models import Item
+from .models import Item, List
 
 
 class HomePageTest(TestCase):
@@ -58,3 +58,15 @@ class ItemModelTest(TestCase):
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
         self.assertTemplateUsed('lists/home_page.html')
+
+class ListModelTest(TestCase):
+    def test_list_creation(self):
+        payload = {
+            'name': 'my awesome list'
+        }
+        self.client.post('/new', payload)
+        list_item = List.objects.last()
+        self.assertLast(list_item.name, 'my awesome list')
+
+
+
